@@ -6,9 +6,13 @@
 
 - `isNaN`方法：该方法用于检测参数是否为数值型，如果是，返回true，否则，返回false。（False）
 
-**`isNaN()` 函数用于检查其参数是否是非数字值。**
+ `isNaN()` **函数用于检查其参数是否是非数字值。**
 
-- `eval`方法：该方法将某个参数字符串作为一个JavaScript执行。(True)
+如果判断可以转化为数字  说明他是一个数字 （转化前） 那么返回false、如果是字符串或者NaN本身  不能转化为数字的返回true
+
+
+
+- `eval`方法：该方法将**某个参数字符串作为一个JavaScript执行。**(True)
 
 考察另一角度：可以在写的代码中用程序生成代码并运行，就好像代码写在那个位置，起到修改词法作用域的效果。（见JS书）
 
@@ -65,7 +69,7 @@ undefined
 
 对于DOM元素，children是指DOM Object类型的子对象，不包括tag之间隐形存在的TextNode，而childNodes包括tag之间隐形存在的TextNode对象
 
-childNodes获取子节点没有类型限制，span是一个元素节点，还有两个文本节点：空格和换行都被看做一个文本节点。所以，3个子节点 = 两个文本节点 + 一个元素节点。tagName用来获取元素的标签名，文本节点没有标签名，所以也就为undefined了
+**childNodes获取子节点没有类型限制，span是一个元素节点，**还有两个文本节点：空格和换行都被看做一个文本节点。所以，3个子节点 = 两个文本节点 + 一个元素节点。tagName用来获取元素的标签名，文本节点没有标签名，所以也就为undefined了
 
 - 查找元素的方法
 
@@ -119,17 +123,17 @@ ABCD
 
 1. 
 
-```
+```js
 <html>
      <head>
          <script>
          function myFunc() {
-         document.write(a);
-         document.write(func());
-         var a = 1;
-         function func() {
-         return 2;
-         }
+             document.write(a);
+             document.write(func());
+             var a = 1;
+             function func() {
+                return 2;
+             }
          }
          </script>
      </head>
@@ -322,6 +326,10 @@ Ajax技术的工作原理：可以分成3步
 
 可以看到，send()前是open()
 
+open()首先确定的是  方法get || post   然后是url和boolean
+
+
+
 ### `iframe`的相关问题
 
 - `iframe`的创建比一般的DOM元素慢了1-2个数量级（True）
@@ -329,7 +337,7 @@ Ajax技术的工作原理：可以分成3步
 
 解析：
 
-1、创建比一般的 DOM 元素慢了 1-2 个数量级
+**1、创建比一般的 DOM 元素慢了 1-2 个数量级**
 
 iframe 的创建比其它包括 scripts 和 css 的 DOM 元素的创建慢了 1-2 个数量级，使用 iframe 的页面一般不会包含太多 iframe，所以创建 DOM 节点所花费的时间不会占很大的比重。但带来一些其它的问题：onload 事件以及连接池（connection pool）
 
@@ -337,7 +345,7 @@ iframe 的创建比其它包括 scripts 和 css 的 DOM 元素的创建慢了 1-
 
 及时触发 window 的 onload 事件是非常重要的。onload 事件触发使浏览器的 “忙” 指示器停止，告诉用户当前网页已经加载完毕。当 onload 事件加载延迟后，它给用户的感觉就是这个网页非常慢。
 
-window 的 onload 事件需要在所有 iframe 加载完毕后（包含里面的元素）才会触发。在 Safari 和 Chrome 里，通过 JavaScript 动态设置 iframe 的 SRC 可以避免这种阻塞情况
+**window 的 onload 事件需要在所有 iframe 加载完毕后（包含里面的元素）才会触发。**（所以他会很大程度上阻塞onload事件）在 Safari 和 Chrome 里，通过 JavaScript 动态设置 iframe 的 SRC 可以避免这种阻塞情况
 
 3、唯一的连接池
 
@@ -347,13 +355,17 @@ window 的 onload 事件需要在所有 iframe 加载完毕后（包含里面的
 
 4、不利于 SEO
 
-搜索引擎的检索程序无法解读 iframe。另外，iframe 本身不是动态语言，样式和脚本都需要额外导入。综上，iframe 应谨慎使用。
+**搜索引擎**的检索程序**无法解读** iframe。另外，iframe 本身不是动态语言，样式和脚本都需要额外导入。综上，iframe 应谨慎使用。
 
 ## 语言特性
 
 ### 基本类型
 
-基本类型：undefined、null、string、number、boolean、symbol
+基本类型：undefined、null、string、number、boolean、symbol、bigInt()
+
+*`BigInt`** 是一种内置对象，它提供了一种方法来表示大于 `2^53 - 1` 的整数。这原本是 Javascript中可以用 [`Number`]表示的最大数字。*`BigInt`** 可以表示任意大的整数
+
+它在某些方面类似于 [`Number`] ，但是也有几个关键的不同点：不能用于 [`Math`] 对象中的方法；不能和任何 [`Number`]实例混合运算，两者必须转换成同一种类型。在两种类型来回转换时要小心，因为 `BigInt` 变量在转换成 [`Number`]变量时可能会丢失精度。
 
 **特点** 1.基本类型的值是不可变得
 
@@ -403,7 +415,7 @@ console.log(a == b); //true
 
 **4. toString**
 
-toString() 是 Object 的原型方法，调用该方法，**默认返回当前对象的 [[Class]]** 。这是一个内部属性，其格式为 [object Xxx] ，其中 Xxx 就是对象的类型。
+toString() 是 Object 的原型方法，调用该方法，**默认返回当前对象的 [[Class]]** 。这是一个内部属性，其格式为 [object Xxx] ，其中 Xxx 就是对象的类型。f
 
 ### 优先级
 
