@@ -1309,10 +1309,14 @@ flex, transform, 绝对定位, 这几种方法**同时适用于水平居中和�
 **垂直居中**：
 
 - 单行文本：通过设置和父节点高度相同的line-height
+
 - 行内块级元素：使用`display: inline-block;`，`vertical-align: middle;`加上为元素辅助实现
 
-```
+  ps:z只有在表格中可以垂直居中  不然就设置display: table;
+
+```css
 .parent::after, .son {
+		//display: table; 在非表格时需要设置
     display:inline-block;
     vertical-align:middle;
 }
