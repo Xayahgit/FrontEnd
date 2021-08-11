@@ -553,7 +553,7 @@ ACD
     script.type = 'text/javascript';
 
     // 传参一个回调函数名给后端，方便后端返回时执行这个在前端定义的回调函数
-    script.src = 'http://xxxxxxx:8080/login?callback=handleCallback';
+    script.src = 'http://xxxxxxx:8080/login?callback=handleCallback';//这里给出回调函数的名字
     document.head.appendChild(script);
 
     function handleCallback(res) {
