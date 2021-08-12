@@ -9,13 +9,13 @@
 **新增特性**：
 
 - 拖放（Drag and drop）API
-- 语义化更好的内容标签
-- 音频、视频API
-- 画布（Canvas）API
+- **语义化更好的内容标签**
+- **音频、视频API**
+- **画布（Canvas）API**
 - 地理（Geolocation）API
-- 本地离线存储（localStorage），长期数据存储，浏览器关闭后数据不会丢失
-- 会话存储（sessionStorage），数据在浏览器关闭后自动删除
-- 表单控件（calendar、date、time、email、url、search）
+- **本地离线存储（localStorage），长期数据存储，浏览器关闭后数据不会丢失**
+- **会话存储（sessionStorage），数据在浏览器关闭后自动删除**
+- **表单控件（calendar、date、time、email、url、search）**
 - 新的技术包括webwork、websocket、Geolocation
 
 #### 什么是HTML5
@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {});
 
 当浏览器在解析 HTML 页面时遇到了 `<script>...</script>` 标签，将无法继续构建DOM树（**UI 渲染线程与 JS 引擎是互斥的**，当 JS 引擎执行时 UI 线程会被挂起），必须立即执行脚本。**所以 `DOMContentLoaded` 有可能在所有脚本执行完毕后触发。**
 
-外部脚本（带 `src` 的）的加载和解析也会**暂停DOM树构建**，**所以 `DOMContentLoaded` 也会等待外部脚本**。带 `async` 的外部脚本，可能会在DOMContentLoaded事件之前或之后执行。带 `defer` 的脚本肯定会在`DOMContentLoaded`事件之前执行。
+外部脚本（带 `src` 的）的加载和解析也会**暂停DOM树构建**，**所以 `DOMContentLoaded` 也会等待外部脚本**。**带 `async` 的外部脚本，可能会在DOMContentLoaded事件之前或之后执行。带 `defer` 的脚本肯定会在`DOMContentLoaded`事件之前执行。**
 
 - **DOMContentLoaded 与样式表**
 
@@ -172,13 +172,13 @@ Worker 线程**一旦新建成功，就会始终运行**，不会被主线程上
 
 **使用方式**
 
-（1）通过 worker= new Worker（url）加载一个 JavaScript文件，创建一个 Worker，同时返回一个 Worker实例。由于 Worker 不能读取本地文件，所以这个脚本必须来自网络。
+**（1）通过 worker= new Worker（url）加载一个 JavaScript文件，创建一个 Worker，同时返回一个 Worker实例。由于 Worker 不能读取本地文件，所以这个脚本必须来自网络。**
 
-（2）然后，主线程调用`worker.postMessage()`方法，向 Worker 发消息。
+**（2）然后，主线程调用`worker.postMessage()`方法，向 Worker 发消息。**
 
 （3）`worker.postMessage()`方法的参数，就是主线程传给 Worker 的数据。它可以是各种数据类型，包括二进制数据。
 
-（4）主线程通过`worker.onmessage`指定监听函数，接收子线程发回来的消息。
+**（4）主线程通过`worker.onmessage`指定监听函数，接收子线程发回来的消息。**
 
 （5）主线程使用 worker.terminate()终止一个 Worker的执行。
 
@@ -271,7 +271,7 @@ WebSocket 的用法相当简单。
 
 ##### HTML 5中的DataList是什么？
 
-HTML 5中的DataList控件元素有助于提供自动完成功能的文本框，如下图所示。
+HTML 5中的DataList控件元素有助于提供自动完成功能的输入框，如下图所示。
 
 ![img](https://pic3.zhimg.com/80/v2-eb9973a63926ebc707fed492ace1e136_1440w.png)
 
@@ -444,7 +444,7 @@ HTML5应用缓存最关键的就是支持离线应用，可获取少数或者全
 > meta标签的功能
 
 - META标签是HTML标记HEAD区的一个关键标签，它提供的信息虽然用户不可见，但却是文档的**最基本的元信息**。
-- `<meta>`除了提供**文档字符集、使用语言、作者**等网页相关信息外，还可以**设置信息给搜索引擎**，目的是为了SEO（搜索引擎优化）。
+- `<meta>`除了提供**文档字符集charset、使用语言、作者**等网页相关信息外，还可以**设置信息给搜索引擎**，目的是为了SEO（搜索引擎优化）。
 - HTML 元素表示那些**不能**由其它 HTML 元相关（meta-related）元素（(、, <script>、<style> 或 <title>）之一表示的任何元数据信息。
 
 > 属性
