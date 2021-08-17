@@ -169,7 +169,7 @@ export default class VNode {
         ....
 ```
 
-其实`VNode`的作用是相当大的。我们在视图渲染之前，把写好的`template`模板先编译成`VNode`并缓存下来，等到数据发生变化页面需要重新渲染的时候，我们把数据发生变化后生成的`VNode`与前一次缓存下来的`VNode`进行对比，找出差异，然后有差异的`VNode`对应的真实`DOM`节点就是需要重新渲染的节点，最后根据有差异的`VNode`创建出真实的`DOM`节点再插入到视图中，最终完成一次视图更新。
+其实`VNode`的作用是相当大的。**我们在视图渲染之前，把写好的`template`模板先编译成`VNode`并缓存下来**，等到数据发生变化页面需要重新渲染的时候，我们把数据发生变化后生成的`VNode`与前一次缓存下来的`VNode`进行对比，找出差异，然后有差异的`VNode`对应的真实`DOM`节点就是需要重新渲染的节点，最后根据有差异的`VNode`创建出真实的`DOM`节点再插入到视图中，最终完成一次视图更新。
 
 ### 2.3DOM-diff
 
@@ -197,3 +197,233 @@ patch的三件事
 
 创建节点之后 更新的位置需要考究**合适的位置是所有未处理节点之前，而并非所有已处理节点之后**。
 
+### 3.1模板编译
+
+你可以这么理解：**把用户写的模板进行编译，就会产生`VNode`。**
+
+或者写一些`Vue`指令，如`v-on`、`v-if`等。而这些东西都是在原生`HTML`语法中不存在的，不被接受的。但是事实上我们确实这么写了，也被正确识别了，页面也正常显示了，这又是为什么呢？
+
+这就归功于`Vue`的模板编译了，`Vue`会把用户在`<template></template>`标签中写的类似于原生`HTML`的内容进行编译，把原生`HTML`的内容找出来，再把非原生`HTML`找出来，经过一系列的逻辑处理生成渲染函数，也就是`render`函数，而`render`函数会将模板内容生成对应的`VNode`，而`VNode`再经过前几篇文章介绍的`patch`过程从而得到将要渲染的视图中的`VNode`，最后根据`VNode`创建真实的`DOM`节点并插入到视图中， 最终完成视图的渲染更新。
+
+而把用户在`<template></template>`标签中写的类似于原生`HTML`的内容进行编译，把原生`HTML`的内容找出来，再把非原生`HTML`找出来，经过一系列的逻辑处理生成渲染函数，也就是`render`函数的这一段过程称之为模板编译过程
+
+![](C:\Users\shiyifei01_sx\Desktop\FrontEnd\FrontEnd\1.f0570125.png)
+
+### 3.2生成render函数
+
+将一堆字符串模板解析成抽象语法树`AST`后，我们就可以对其进行各种操作处理了，处理完后用处理后的`AST`来生成`render`函数。其具体流程可大致分为三个阶段：
+
+1. 模板解析阶段：将一堆模板字符串用正则等方式解析成抽象语法树`AST`；
+2. 优化阶段：遍历`AST`，找出其中的静态节点，并打上标记；这样DOM-diff算法会直接跳过静态的节点，从而减少了比较的过程，优化了patch的性能
+3. 代码生成阶段：将`AST`转换成渲染函数； AST => render（）
+
+![](C:\Users\shiyifei01_sx\Desktop\FrontEnd\FrontEnd\3.15d9566b.png)
+
+### 3.3总结
+
+它的最终目的就是：把用户所写的**模板转化成**供`Vue`实例在挂载**时可调用的`render`函数**。或者你可以这样简单的理解为：模板编译就是一台机器，给它输入模板字符串，它就输出对应的`render`函数。
+
+### 4.1生命周期--初始化阶段
+
+new Vue()都干了什么：new的过程实际上是执行了Vue的构造函数
+
+```javascript
+function Vue (options) {
+  if (process.env.NODE_ENV !== 'production' &&
+    !(this instanceof Vue)
+  ) {
+    warn('Vue is a constructor and should be called with the `new` keyword')
+  }
+  this._init(options)  //构造函数核心代码
+}
+```
+
+`new Vue()`会执行`Vue`类的构造函数，构造函数内部会执行`_init`方法，所以`new Vue()`所干的事情其实就是`_init`方法所干的事情，那么我们着重来分析下`_init`方法都干了哪些事情。
+
+把`Vue`实例赋值给变量`vm`，并且把用户传递的`options`选项与当前构造函数的`options`属性及其父级构造函数的`options`属性进行合并（关于属性如何合并的问题下面会介绍），得到一个新的`options`选项赋值给`$options`属性，并将`$options`属性挂载到`Vue`实例上
+
+在上文中，`_init`方法里首先会调用`mergeOptions`函数来进行属性合并，如下：
+
+这里值得一提的是 `mergeField` 函数，它不是简单的把属性从一个对象里复制到另外一个对象里，而是根据被合并的不同的选项有着不同的合并策略。例如，对于`data`有`data`的合并策略，即该文件中的`strats.data`函数；对于`watch`有`watch`的合并策略，即该文件中的`strats.watch`函数等等。这就是设计模式中非常典型的**策略模式**。
+
+触发钩子函数
+
+关于`callHook`函数如何触发钩子函数的问题，我们只需看一下该函数的实现源码即可，该函数的源码位于`src/core/instance/lifecycle.js` 中，如下：
+
+```javascript
+export function callHook (vm: Component, hook: string) {
+  const handlers = vm.$options[hook]
+  if (handlers) {
+    for (let i = 0, j = handlers.length; i < j; i++) {
+      try {
+        handlers[i].call(vm)
+      } catch (e) {
+        handleError(e, vm, `${hook} hook`)
+      }
+    }
+  }
+}
+```
+
+
+
+可以看到，`callHook`函数逻辑非常简单。首先从实例的`$options`中获取到需要触发的钩子名称所对应的钩子函数数组`handlers`，我们说过，每个生命周期钩子名称都对应了一个钩子函数数组。然后遍历该数组，将数组中的每个钩子函数都执行一遍。
+
+分析了`new Vue()`时其内部都干了些什么。其主要逻辑就是：合并配置，调用一些初始化函数，触发生命周期钩子函数，调用`$mount`开启下一个阶段。
+
+
+
+**initEvents：**
+
+回到之前的模板编译中  遇到开始标签后会开始解析开始的标签
+
+还会调用`processAttrs` 方法解析标签中的属性，`processAttrs` 方法位于源码的
+
+**initState**：
+
+在`Vue`组件中会写一些如`props`、`data`、`methods`、`computed`、`watch`选项，我们把这些选项称为实例的状态选项。也就是说，`initState`函数就是用来初始化这些状态的
+
+给实例上新增了一个属性`_watchers`，用来存储当前实例中所有的`watcher`实例，无论是使用`vm.$watch`注册的`watcher`实例还是使用`watch`选项注册的`watcher`实例，都会被保存到该属性中。
+
+所以从`Vue 2.0`版本起，`Vue`不再对所有数据都进行侦测，而是将侦测粒度提高到了组件层面，对每个组件进行侦测，所以在每个组件上新增了`vm._watchers`属性，用来存放这个组件内用到的所有状态的依赖，当其中一个状态发生变化时，就会通知到组件，然后由组件内部使用虚拟`DOM`进行数据比对，从而降低内存开销，提高性能。
+
+**watch**
+
+```js
+  watch: {
+    a: function (val, oldVal) {
+      console.log('new: %s, old: %s', val, oldVal)
+    },
+    // methods选项中的方法名
+    b: 'someMethod',
+    // 深度侦听，该回调会在任何被侦听的对象的 property 改变时被调用，不论其被嵌套多深
+    c: {
+      handler: function (val, oldVal) { /* ... */ },
+      deep: true
+    },
+    // 该回调将会在侦听开始之后被立即调用
+    d: {
+      handler: 'someMethod',
+	  immediate: true
+    },
+```
+
+初始化顺序：props =>methods=>data=>computed=>watch
+
+### 4.2模板编译阶段
+
+该阶段所做的主要工作是获取到用户传入的模板内容并将其编译成渲染函数。
+
+从用户传入的`el`选项和`template`选项中获取到用户传入的内部或外部模板，然后将获取到的模板编译成渲染函数。
+
+### 4.3挂载阶段
+
+要工作是创建`Vue`实例并用其替换`el`选项对应的`DOM`元素，同时还要开启对模板中数据（状态）的监控，当数据（状态）发生变化时通知其依赖进行视图更新。
+
+在mounted阶段
+
+接下来创建了一个`Watcher`实例，并将定义好的`updateComponent`函数传入。要想开启对模板中数据（状态）的监控，这一段代码是关键，如下：
+
+```javascript
+new Watcher(
+    vm,                    // 第一个参数
+    updateComponent,       // 第二个参数 可以读到getter和setter进行依赖缓存
+    noop,                  // 第三个参数
+    {                      // 第四个参数
+        before () {
+          if (vm._isMounted) {
+            callHook(vm, 'beforeUpdate')
+          }
+        }
+	},
+    true                    // 第五个参数
+)
+```
+
+如果是函数，会执行这个函数。一旦读取了数据或者执行了函数，就会触发数据或者函数内数据的`getter`方法，而在`getter`方法中会将`watcher`实例添加到该数据的依赖列表中，当该数据发生变化时就会通知依赖列表中所有的依赖，依赖接收到通知后就会调用第四个参数回调函数去更新视图。上面代码中把`updateComponent`函数作为第二个参数传给`Watcher`类从而创建了`watcher`实例，**那么`updateComponent`函数中**读取的所有数据都将被`watcher`所监控，这些数据中只要有任何一个发生了变化，那么`watcher`都将会得到通知，从而会去调用第四个参数回调函数去更新视图，如此反复，直到实例被销毁。
+
+### 5.1数据相关的方法
+
+分别是`vm.$set`、`vm.$delete`和`vm.$watch`。
+
+```js
+export default class Watcher {
+    constructor (/* ... */) {
+        // ...
+        this.value = this.get()
+    }
+    get () {
+		// ...
+        // "touch" every property so they are all tracked as
+      	// dependencies for deep watching
+        if (this.deep) {
+            traverse(value)
+        }
+        return value
+    }
+}
+```
+
+还记得我们在介绍数据变化侦测的时候说过，对于`object`型数据，当我们向`object`数据里添加一对新的`key/value`或删除一对已有的`key/value`时，`Vue`是无法观测到的；而对于`Array`型数据，当我们通过数组下标修改数组中的数据时，`Vue`也是是无法观测到的
+
+**nextTick方法**
+
+Vue对DOM的更新策略：
+
+`Vue` 在更新 `DOM` 时是**异步**执行的。只要侦听到数据变化，`Vue` 将开启一个事件队列，并缓冲在同一事件循环中发生的所有数据变更。如果同一个 `watcher` 被多次触发，只会被推入到事件队列中一次。这种在缓冲时去除重复数据对于避免不必要的计算和 `DOM` 操作是非常重要的。然后，在下一个的事件循环“tick”中，`Vue` 刷新事件队列并执行实际 (已去重的) 工作。
+
+### 6.1全局API
+
+Vue.use(plugin)
+
+安装 Vue.js 插件。如果插件是一个对象，必须提供 `install` 方法。如果插件是一个函数，它会被作为 install 方法。install 方法调用时，会将 `Vue` 作为参数传入。
+
+### 7.1自定义指令
+
+一种是使用全局API——`Vue.directive`来定义全局指令，这种方式定义的指令会被存放在`Vue.options['directives']`中；另一种是在组件内的`directive`选项中定义专为该组件使用的局部指令，这种方式定义的指令会被存放在`vm.$options['directives']`中。
+
+写法：
+
+```js
+// 注册一个全局自定义指令 `v-focus`
+Vue.directive('focus', {
+    // 当被绑定的元素插入到 DOM 中时……
+    inserted: function (el) {
+        // 聚焦元素
+        el.focus()
+    }
+})
+```
+
+```html
+<input v-focus>
+```
+
+**<keep-alive>原理**
+
+在 `created` 钩子函数里定义并初始化了两个属性： `this.cache` 和 `this.keys`。
+
+```javascript
+created () {
+    this.cache = Object.create(null)
+    this.keys = []
+}
+```
+
+
+
+`this.cache`是一个对象，用来存储需要缓存的组件，它将以如下形式存储：
+
+```javascript
+this.cache = {
+    'key1':'组件1',
+    'key2':'组件2',
+    // ...
+}
+```
+
+`this.keys`是一个数组，用来存储每个需要缓存的组件的`key`，即对应`this.cache`对象中的键值。
+
+**destroy**
+
+当`<keep-alive>`组件被销毁时，此时会调用`destroyed`钩子函数，在该钩子函数里会遍历`this.cache`对象，然后将那些被缓存的并且当前没有处于被渲染状态的组件都销毁掉并将其从`this.cache`对象中剔除。
