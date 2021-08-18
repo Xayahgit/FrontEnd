@@ -145,3 +145,55 @@ JavaScript 中 es2015/2016/2017/2046 的新语法转化为 es5，让低端运行
 
 ### 3.配置文件
 
+既然插件是 babel 的根本，那如何使用呢？总共分为 2 个步骤：
+
+1. 将插件的名字增加到配置文件中 (根目录下创建 .babelrc 或者 package.json 的 `babel` 里面，格式相同)
+2. 使用 `npm install babel-plugin-xxx` 进行安装
+
+preset 分为以下几种：
+
+- 官方内容，目前包括 env, react, flow, minify 等。这里最重要的是 env，后面会详细介绍。
+
+- stage-x，这里面包含的都是当年最新规范的草案，每年更新。
+  这里面还细分为
+
+- - Stage 0 - 稻草人: 只是一个想法，经过 TC39 成员提出即可。
+  - Stage 1 - 提案: 初步尝试。
+  - Stage 2 - 初稿: 完成初步规范。
+  - Stage 3 - 候选: 完成规范和浏览器初步实现。
+  - Stage 4 - 完成: 将被添加到下一年度发布。
+
+### 4.执行顺序
+
+很简单的几条原则：
+
+- Plugin 会运行在 Preset 之前。
+- Plugin 会从前到后顺序执行。
+- Preset 的顺序则 **刚好相反**(从后向前)。
+
+### 5.env
+
+env 的核心目的是通过配置得知目标环境的特点，然后只做必要的转换。例如目标浏览器支持 es2015，那么 es2015 这个 preset 其实是不需要的，于是代码就可以小一点(一般转化后的代码总是更长)，构建时间也可以缩短一些。
+
+### 6.babel-loader配置
+
+```js
+module: {
+  rules: [
+    {
+      test: /\.js$/,
+      exclude: /(node_modules|bower_components)/,
+      loader: 'babel-loader'
+    }
+  ]
+}
+//如果想在这里传入 babel 的配置项，也可以把改成：
+// loader: 'babel-loader' 改成如下：
+use: {
+  loader: 'babel-loader',
+  options: {
+    // 配置项在这里
+  }
+}
+```
+
