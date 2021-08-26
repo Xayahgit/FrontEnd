@@ -1,3 +1,55 @@
+## Webpack基础
+
+本质上，**webpack** 是一个用于现代 JavaScript 应用程序的 *静态模块打包工具*。当 webpack 处理应用程序时，它会在内部构建一个 [依赖图(dependency graph)](https://webpack.docschina.org/concepts/dependency-graph/)，此依赖图对应映射到项目所需的每个模块，并生成一个或多个 *bundle*。
+
+![](C:\Users\shiyifei01_sx\AppData\Roaming\Typora\typora-user-images\image-20210727155939001.png)
+
+### 1.入口(entry) 
+
+**入口起点(entry point)** 指示 webpack 应该使用哪个模块，来作为构建其内部 [依赖图(dependency graph)](https://webpack.docschina.org/concepts/dependency-graph/) 的开始。进入入口起点后，webpack 会找出有哪些模块和库是入口起点（直接和间接）依赖的。
+
+默认值是 `./src/index.js`
+
+### 2.输出（output）
+
+**output** 属性告诉 webpack 在哪里输出它所创建的 *bundle*，以及如何命名这些文件。主要输出文件的默认值是 `./dist/main.js`，其他生成文件默认放置在 `./dist` 文件夹中。
+
+``` js
+const path = require('path');
+
+module.exports = {
+  entry: './path/to/my/entry/file.js',
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'my-first-webpack.bundle.js',
+  },
+};
+```
+
+### 3.loader
+
+webpack 只能理解 JavaScript 和 JSON 文件，这是 webpack 开箱可用的自带能力。**loader** 让 webpack 能够去处理其他类型的文件，并将它们转换为有效 [模块](https://webpack.docschina.org/concepts/modules)，以供应用程序使用，以及被添加到依赖图中
+
+``` js
+module.exports = {
+  module: {
+    rules: [
+      { test: /\.css$/, use: 'css-loader' },
+      { test: /\.ts$/, use: 'ts-loader' },
+    ],
+  },
+};
+
+```
+
+
+
+### 4.插件plugin
+
+loader 用于转换某些类型的模块，而插件则可以用于执行范围更广的任务。包括：打包优化，资源管理，注入环境变量。
+
+webpack **插件**是一个具有 [`apply`]方法的 JavaScript 对象。
+
 ## Webpack--bundle.js相关
 
 ### 1.webpack.config.js
