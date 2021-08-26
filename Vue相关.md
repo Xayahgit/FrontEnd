@@ -6,15 +6,15 @@
 
 Class 和 Style 均可以通过对象语法和数组语法进行动态绑定。
 
-- 对象语法：
+- 对象语法：·
 
-```
+```·
 <div v-bind:class="{ active: isActive, 'text-danger': hasError }"></div>
 data: {  isActive: true,  hasError: false}
 ```
 
 - 数组语法：
-
+·
 ```
 <div v-bind:class="[isActive ? activeClass : '', errorClass]"></div>
 data: {  activeClass: 'active',  errorClass: 'text-danger'}
