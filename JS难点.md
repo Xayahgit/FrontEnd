@@ -35,7 +35,7 @@ let id1 = Symbol('id');
 
 > 关于BigInt
 
-js 采用双精度浮点数，这也导致了精度有限的问题。在 js 中，Number 基本类型可以精确表示的最大整数是 2^53。因此早期会有这如下的“bug”：
+js 采用**双精度浮点数**，这也导致了精度有限的问题。在 js 中，Number 基本类型可以精确表示的最大整数是 2^53。因此早期会有这如下的“bug”：
 
 ```
 let max = Number.MAX_SAFE_INTEGER;	// 最大安全整数
@@ -95,6 +95,16 @@ typeof {}; // "object"
 typeof []; // "object" 
 typeof new Date(); // "object"
 ```
+
+### 为什么typeof null是object
+
+JS类型值是存在32位的单元里，其中有1-3位表示类型（TYPE TAG）  其他位表示真实值
+
+Number类型由于双精度浮点数的限制2^53。表示object的标记位刚好是000
+
+而js里面的null是空指针  机器码空指针标记也是0  所以最后出来的是object
+
+
 
 #### **`instanceof` 运算符。**
 

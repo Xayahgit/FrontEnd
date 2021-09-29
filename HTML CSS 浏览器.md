@@ -30,7 +30,7 @@ HTML5是万维网联盟（W3C）和网络超文本应用技术工作组（ WHATW
 
 > 生命周期的三个重要事件
 
-- `DOMContentLoaded` —— 浏览器已经**完全加载了 HTML，DOM 树已经构建完毕**，但是像是 ![img]() 和样式表等**外部资源可能并没有下载完毕**。
+- `DOMContentLoaded` —— 浏览器已经**完全加载了 HTML，DOM 树已经构建完毕**，但是像是 ![img]() 和样式表等**外部资源可能并没有下载完毕**。**（浏览器已经完全加载了HTML  DOM树已经构建完毕)**
 - `load` —— 浏览器**已经加载了所有的资源**（图像，样式表等）。
 - `beforeunload` —— 当用户**即将离开当前页面（刷新或关闭）时触发**。正要去服务器读取新的页面时调用，此时还没开始读取；
 - `unload` —— 在用户**离开页面后触发**。从服务器上读到了需要加载的新的页面，在即将替换掉当前页面时调用。
@@ -117,7 +117,7 @@ webstorage是本地存储，存储在客户端，包括localStorage和sessionSto
 
 > sessionStorage仅在**当前会话下有效**，关闭页面或浏览器后被清除。存放数据大小为一般为**5MB**,而且它仅在客户端（即浏览器）中保存，**不参与和服务器的通信**。源生接口可以接受，亦可再次封装来对Object和Array有更好的支持。
 
-localStorage和sessionStorage使用时**使用相同的API**：
+localStorage和sessionStorage使用时**使用相同的API**：get/setItem  removeItem    来获取key
 
 ```
 localStorage.setItem("key","value");//以“key”为名称存储一个值“value”
@@ -148,7 +148,7 @@ localStorage.setItem(key,JSON.stringify(country));
 - cookies存储的数据，客户端/服务器端既**可以从客户端也可以从服务器端访问**。每个请求都会发送cookie数据到服务器。
 - 本地存储只能在本地浏览器端访问数据。**服务器无法访问本地存储**，除非特意通过POST或GET发送到服务器。大小每个Cookie 4095个字节。每个域5 MB。
 - **有效期**：cookie有附加的有效期。所以有效期后的cookie和cookie数据会被删除。本地存储数据没有有效期限。要么最终用户从浏览器删除它，要么使用JavaScript编程删除。
-- cookie需要指定作用域，**不可以跨域调用**。
+- cookie需要指定作用域，**不可以跨域调用**。（**可以设置Domain  然后在如果ajax请求后端工程时，可以设置withCredentials: true  携带cookie**）
 - cookie需要前端开发者自己封装 setCookie和 getCookie。但 cookie也是不可或缺的，因为 cookie的作用是与服务器进行交互，并且还是HTTP规范的一部分，而 localStorage 仅因为是为了在本地“存储”数据而已，无法跨浏览器使用。
 
 ##### cookie 和 session 的区别是什么
@@ -166,7 +166,7 @@ localStorage.setItem(key,JSON.stringify(country));
 
 ##### web workers是什么，为什么我们需要web workers？
 
-Web Worker 的作用，就是为 JavaScript **创造多线程环境**，**允许主线程创建 Worker 线程，将一些任务分配给后者运行**。在主线程运行的同时，Worker 线程在后台运行，**两者互不干扰**。**等到 Worker 线程完成计算任务，再把结果返回给主线程**。这样的好处是，一些计算密集型或高延迟的任务，被 Worker 线程负担了，主线程（通常负责 UI 交互）就会很流畅，不会被阻塞或拖慢。
+Web Worker 的作用，就是为 JavaScript **创造多线程环境**，**允许主线程创建 Worker 线程，将一些任务分配给后者运行**。在主线程运行的同时，Worker 线程在后台运行，**两者互不干扰**。**等到 Worker 线程完成计算任务，再把结果返回给主线程**。这样的好处是，**一些计算密集型或高延迟的任务，被 Worker 线程负担了**，主线程（通常负责 UI 交互）就会很流畅，不会被阻塞或拖慢。
 
 Worker 线程**一旦新建成功，就会始终运行**，不会被主线程上的活动（比如用户点击按钮、提交表单）打断。这样有利于随时响应主线程的通信。但是，这也造成了 Worker **比较耗费资源**，不应该过度使用，而且一旦使用完毕，就应该关闭。
 
@@ -176,9 +176,9 @@ Worker 线程**一旦新建成功，就会始终运行**，不会被主线程上
 
 **（2）然后，主线程调用`worker.postMessage()`方法，向 Worker 发消息。**
 
-（3）`worker.postMessage()`方法的参数，就是主线程传给 Worker 的数据。它可以是各种数据类型，包括二进制数据。
+（3）`worker.postMessage()`方法的参数，就是主线程传给 Worker 的数据。它可以是各种数据类型，包括二进制数据**。postMessage（传输数据）**
 
-**（4）主线程通过`worker.onmessage`指定监听函数，接收子线程发回来的消息。**
+**（4）主线程通过`worker.onmessage`指定监听函数，接收子线程发回来的消息。**worker.onmessage监听返回消息
 
 （5）主线程使用 worker.terminate()终止一个 Worker的执行。
 
@@ -271,7 +271,15 @@ WebSocket 的用法相当简单。
 
 ##### HTML 5中的DataList是什么？
 
-HTML 5中的DataList控件元素有助于提供自动完成功能的输入框，如下图所示。
+HTML 5中的DataList控件元素有助于提供自动完成功能的输入框，如下图所示。    
+
+input list = "a"
+
+datalist id="a"
+
+option value="1"
+
+...
 
 ![img](https://pic3.zhimg.com/80/v2-eb9973a63926ebc707fed492ace1e136_1440w.png)
 
@@ -292,10 +300,10 @@ HTML 5中的DataList控件元素有助于提供自动完成功能的输入框，
 
 HTML 5推出了10个重要的新的表单元素：
 
-1. Color（拾色器对话框）
-2. Date（日历对话框）
+1. **Color（拾色器对话框）**
+2. **Date（日历对话框）**
 3. Datetime-local（本地时间显示日历）
-4. Email
+4. **Email**
 5. Time
 6. Url
 7. Range（显示范围调整控件）
@@ -394,7 +402,7 @@ HTML5应用缓存最关键的就是支持离线应用，可获取少数或者全
 | xml:space | preserve         | 规定是否保留代码中的空白。                                   |
 | type      | text/xxx         | language的替换属性，表示编写代码使用的脚本语言的内容类型,也称为MIME属性。 |
 
-没有 `defer` 或 `async`，所有<script>元素会按照在页面**出现的先后顺序**依次被解析，浏览器会立即加载并执行指定的脚本, 只有解析完前面的script元素的内容后，才会解析后面的代码。 **`async` 和 `defer` 属性仅仅对外部脚本起作用，在 `src` 不存在时会被自动忽略。**
+没有 `defer` 或 `async`，所有<script>元素会按照在页面**出现的先后顺序**依次被解析，浏览器会立即加载并执行指定的脚本, 只有解析完前面的script元素的内容后，才会解析后面的代码**。 async` 和 `defer` 属性仅仅对外部脚本起作用，在 `src` 不存在时会被自动忽略。**
 
 **关于`defer`属性**:
 
@@ -455,19 +463,9 @@ HTML5应用缓存最关键的就是支持离线应用，可获取少数或者全
 
 - **charset** 声明了**文档的字符编码**。如果使用了这个属性，其值**必须**是与ASCII大小写无关（ASCII case-insensitive）的"`utf-8`"。
 
-- http-equiv
+- http-equiv  
 
-   
-
-  定义了一个
-
-  编译指示指令
-
-  ，其作用
-
-  类似于http协议
-
-  , 告诉浏览器一些关于字符设定,页面刷新,cookie,缓存等等相关信息。属性名叫做 http-equiv 是因为
+   定义了一个编译指示指令，其作用类似于http协议, 告诉浏览器一些关于字符设定,页面刷新,cookie,缓存等等相关信息。属性名叫做 http-equiv 是因为
 
   所有允许的值都是HTTP头部的名称
 
@@ -488,7 +486,9 @@ HTML5应用缓存最关键的就是支持离线应用，可获取少数或者全
 
 > `meta`元素的使用方式
 
-content值里有**多个属性通过`,`隔开**，同时设置多个属性。
+content值里有**多个属性通过`,`隔开**，同时设置多个属性。content中  是包含viewport的信息，全部使用`,`隔开
+
+name="viewport"适配移动端
 
 ```
 /* name */
@@ -547,6 +547,10 @@ viewport 是**浏览器的可视区域**，可视区域的大小是浏览器自�
 ·伪元素选择器（::before, ::after）
 ·通配符选择器（*）
 ```
+
+##### 伪元素和伪类的区别：
+
+- 伪类的操作对象是文档树中已有的元素，而伪元素则创建了一个文档数外的元素。因此，伪类与伪元素的区别在于：有没有创建一个文档树之外的元素。
 
 **属性选择器**
 
@@ -673,7 +677,7 @@ auto 在任何情况下，只会取下面两种值中的一个：
 
 ##### 流体特性和 margin: auto
 
-当一个**绝对定位元素**，**其对立定位方向属性同时有具体定位数值**的时候，流体特性就发生了。
+当一个**绝对定位元素**，**其对立定位方向属性同时有具体定位数值**的时候，流体特性就发生了。top & bottom      left & right如果同時存在數值的時候这时候就会激发流体特性
 
 下述代码是同时实现水平和垂直居中的例子
 
@@ -770,7 +774,7 @@ CSS3 的 `calc()` 函数允许我们**在属性值中执行数学计算操作**�
 }
 ```
 
-使用 `calc()` 函数，我们仅仅通过 top 与 left 属性便能实现相同的效果：
+使用 `calc()` 函数**，我们仅仅通过 top 与 left 属性便能实现相同的效果：**
 
 ```
 .foo {
@@ -973,6 +977,8 @@ html {
 
 ### 特性
 
+了解什么时候触发了BFC
+
 #### BFC
 
 ##### 常见的定位方案
@@ -1004,12 +1010,12 @@ BFC 即 **Block Formatting Contexts** (块级格式化上下文)，它属于上�
 - body **根元素**
 - **浮动元素**：float 除 none 以外的值
 - **绝对定位元素**：position (absolute、fixed)
-- **display 为 inline-block、table-cells、flex**
+- **display 为 inline-block、table-cells、flex**  **行内块元素**
 - **overflow 除了 visible 以外的值** (hidden、auto、scroll)
 
-##### BFC特性及应用
+##### BFC特性及应用（重点）
 
-**1.同一个BFC下的元素外边距会发生折叠**
+**1.同一个BFC下的元素外边距会发生折叠**：同一个BFC一定会发生的事情  如果避免外边距的重叠 可以放在两个BFC中
 
 ```
 <head>
@@ -1068,7 +1074,7 @@ BFC 即 **Block Formatting Contexts** (块级格式化上下文)，它属于上�
 
 ![img](https://pic4.zhimg.com/80/v2-371eb702274af831df909b2c55d6a14b_1440w.png)
 
-由于容器内元素浮动，脱离了文档流，所以容器只剩下 2px 的边距高度。如果使触发容器的 BFC，那么容器将会包裹着浮动元素。
+**由于容器内元素浮动，脱离了文档流，所以容器只剩下 2px 的边距高度。如果使触发容器的 BFC，**那么容器将会包裹着浮动元素。
 
 ```
 <div style="border: 1px solid #000;overflow: hidden">
@@ -1080,7 +1086,7 @@ BFC 即 **Block Formatting Contexts** (块级格式化上下文)，它属于上�
 
 ![img](https://pic4.zhimg.com/80/v2-cc8365db5c9cc5ca003ce9afe88592e7_1440w.png)
 
-**3.BFC可以阻止元素被浮动元素覆盖**
+**3.BFC可以阻止元素被浮动元素覆盖**（因为BFC是单独计算高度的  会阻止本身被浮动元素覆盖）
 
 先来看一个文字环绕效果：
 
@@ -1100,7 +1106,7 @@ BFC 即 **Block Formatting Contexts** (块级格式化上下文)，它属于上�
 
 ### 大小单位区别
 
-**px**：像素。 **em**：**参考物是父元素的font-size**，具有继承的特点。**如果自身定义了font-size按自身来计算**，整个页面内1em不是一个固定的值。 **rem**：**相对于根元素html的font-size计算**，不会像em那样，依赖于父元素的字体大小，而造成混乱。 **vw**：视窗宽度，1vw等于视窗宽度的1%。 **vh**：视窗高度，1vh等于视窗高度的1%。 **vm**：min(vw, vh)。 **%**：是**相对于父元素的大小设定的比率**，position:absolute;的元素是**相对于已经定位的父元素**，position：fixed；的元素是**相对可视窗口**。
+**px**：像素。 **em**：**参考物是父元素的font-size**，按父元素的算   具有继承的特点。**如果自身定义了font-size按自身来计算**，整个页面内1em不是一个固定的值。 **rem**：**相对于根元素html的font-size计算**，不会像em那样，依赖于父元素的字体大小，而造成混乱。 **vw**：视窗宽度，1vw等于视窗宽度的1%。 **vh**：视窗高度，1vh等于视窗高度的1%。 **vm**：min(vw, vh)。 **%**：是**相对于父元素的大小设定的比率**，position:absolute;的元素是**相对于已经定位的父元素**，position：fixed；的元素是**相对可视窗口**。
 
 > **浏览器默认字体是16px**, body设置font-size：62.5%, 那么1rem =62.5% * 16=10px 。
 
@@ -1123,7 +1129,7 @@ Responsive design，意在**实现不同屏幕分辨率的终端上浏览网页�
 **大多数移动浏览器将HTML页面放大为宽的视图（viewport）以符合屏幕分辨率**。你可以使用视图的meta标签来进行重置。下面的视图标签告诉浏览器，**使用设备的宽度作为视图宽度并禁止初始的缩放**。在`<head>`标签里加入这个meta标签。
 
 ```
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width使用设备的宽度, initial-scale=1, maximum-scale=1,禁止缩放 user-scalable=no">
 ```
 
 [1]（user-scalable = no 属性能够解决 iPad 切换横屏之后触摸才能回到具体尺寸的问题。 ）
@@ -1190,10 +1196,10 @@ and (max-width : 320px) {
 - 简单的解决方法可以使用百分比，但这样不友好，会放大或者缩小图片。那么可以尝试给图片指定的最大宽度为百分比。假如图片超过了，就缩小。假如图片小了，就原尺寸输出。
 
 ```
-img { width: auto; max-width: 100%; }
+img { width: auto; max-width: 100%; } // max-width:设置其最大宽度为百分比 width:auto  假如图品超过了便会缩小。
 ```
 
-- 用`::before`和`::after`伪元素 +content 属性来动态显示一些内容或者做其它很酷的事情，在 CSS3 中，任何元素都可以使用 content 属性了，这个方法就是结合 css3 的 attr 属性和 HTML 自定义属性的功能： HTML 结构：
+- 用`::before`和`::after`伪元素 +content 属性来动态显示一些内容或者做其它很酷的事情，在 CSS3 中，任何元素都可以使用 content 属性了，这个方法就是结合 css3 的 attr 属性和 HTML 自定义属性的功能： HTML 结构：   CSS3的attr属性
 
 ```
 <img src="image.jpg"
@@ -1234,8 +1240,8 @@ flex, transform, 绝对定位, 这几种方法**同时适用于水平居中和�
 
 **水平居中**：
 
-- `text-align: center;`适用于行内元素
-- `margin: 0 auto;`适用于块级元素
+- `text-align: center;`适用于行内元素   inline   tac
+- `margin: 0 auto;`适用于块级元素    block
 
 **原理**：
 
@@ -1304,7 +1310,7 @@ flex, transform, 绝对定位, 这几种方法**同时适用于水平居中和�
 >
 > 流体特性的妙处，在于**元素可自动填充父级元素的可用尺寸**。
 >
-> 当流体特性发生时，我们可以给水平/垂直方向的对立定位（也就是 left、right、top、bottom）各设定一个值，然后将水平/垂直方向的 margin 均设为 auto，这样一来，auto 就会自动平分父元素的剩余空间了。
+> 当流体特性发生时，我们可以给水平/垂直方向的对立定位（也就是 left、right、top、bottom）各设定一个值，然后将水平/垂直方向的 margin 均设为 auto，这样一来，auto **就会自动平分父元素的剩余空间了。**
 
 **垂直居中**：
 
@@ -1322,7 +1328,7 @@ flex, transform, 绝对定位, 这几种方法**同时适用于水平居中和�
 }
 ```
 
-- `vertical-align`。`vertical-align`只有**在父层为 td 或者 th 时, 才会生效**, **对于其他块级元素, 例如 div、p 等, 默认情况是不支持**的. 为了使用`vertical-align`, 我们需要设置父元素display:table, 子元素 display:table-cell;vertical-align:middle;
+- `vertical-align`。`vertical-align`只有**在父层为 td 或者 th 时, 才会生效**, **对于其他块级元素, 例如 div、p 等, 默认情况是不支持**的. 为了使用`vertical-align`, 我们需要设置父元素display:table, 子元素 display:table-cell;vertical-align:middle;（vertical-align只有在父级为td或者th的时候可以起效果 设置父元素display:table）
 - flex
 
 ```
@@ -1407,13 +1413,13 @@ flex, transform, 绝对定位, 这几种方法**同时适用于水平居中和�
 - 利用CSS的“background-image”，“background-repeat”，“background-position”的组合进行背景定位。（True）
 - CSS Sprites虽然增加了总的图片的字节，但是很好地减少网页的http请求，从而大大的提高页面的性能。（False）
 
-**CSS Sprites能减少图片的字节，曾经比较过多次3张图片合并成1张图片的字节总是小于这3张图片的字节总和。**
+**CSS Sprites能减少图片的字节，曾经比较过多次3张图片合并成1张图片的字节总是小于这3张图片的字节总和。**精灵图减少图片的字节
 
 #### **使用 base64 编码的优缺点**
 
 base64编码是一种**图片处理格式**，通过**特定的算法将图片编码成一长串字符串**，在页面上显示时可**用该字符串来代替图片的url属性** **使用base64的优点：**
 
-- 减少一个图片的 HTTP 请求
+- 减少一个图片的 HTTP 请求(减少图片的http请求，因为字符串已经代替了图片的url属性)
 
 **使用base64的缺点：**
 
@@ -1427,7 +1433,7 @@ base64编码是一种**图片处理格式**，通过**特定的算法将图片�
 
 1. **javascript 直接实现动画**
 
-> 其主要思想是通过setInterval或setTimeout方法的回调函数来持续调用改变某个元素的CSS样式以达到元素样式变化的效果。
+> 其主要思想是通过setInterval或setTimeout方法的回调函数**来持续调用改**变某个元素的CSS样式以达到元素样式变化的效果。
 
 Jquery的`animate()`方法就是这种方式实现的。
 
@@ -1478,7 +1484,7 @@ transition: property duration timing-function delay;
 
 **注意**
 
-在移动端开发中，**直接使用transition动画会让页面变慢甚至卡顿**。所以我们通常添加`transform:translate3D(0,0,0)`或`transform:translateZ(0)`来**开启移动端动画的GPU加速**，让动画过程更加流畅。
+在移动端开发中，**直接使用transition动画会让页面变慢甚至卡顿**。所以我们通常添加****`transform:translate3D(0,0,0)`或`transform:translateZ(0)`来开启移动端动画的GPU加速，让动画过程更加流畅。****
 
 1. **CSS3 animation**
 
@@ -1498,13 +1504,19 @@ animation: 3s linear 1s slidein;
 }
 ```
 
+animation MDN： 
+
+![](http://pic3.iqiyipic.com/lequ/20210906/a23e5f2eb2804863879fb0f72209fdc5.jpg)
+
+
+
 **比较**
 
 CSS3最大的优势是摆脱了js的控制，并且**能利用硬件加速以及实现复杂动画效果**。
 
 1. **requestAnimationFrame**
 
-requestAnimationFrame是另一种Web API，原理与setTimeout和setInterval类似，都是**通过javascript持续循环的方法调用来触发动画动作**。但是requestAnimationFrame是浏览器**针对动画专门优化形成的APi**，在性能上比另两者要好。
+requestAnimationFrame是另一种Web API，原理与setTimeout和setInterval类似，都是**通过javascript持续循环的方法调用来触发动画动作**。但是requestAnimationFrame是浏览器**针对动画专门优化形成的APi**，在性能上比另两者要好.
 
 ```
 <!DOCTYPE html>
@@ -1548,11 +1560,11 @@ requestAnimationFrame是另一种Web API，原理与setTimeout和setInterval类�
 
 我们注意到，requestAnimationFrame只是**将回调的方法传入到自身的参数中执行**，而不是通过setInterval调用
 
-**为什么`setTimeout`和`setInterval`不好？**
+**为什么`setTimeout`和`setInterval`不好？**因为异步队列的概念  无法保证回调函数的执行时机
 
 由于js是单线程执行，所以为了防止某个任务执行时间过长而导致进程阻塞，js中存在异步队列的概念，对于如`setTimeout`和`ajax`请求都是把进程放到了异步队列中，当主进程为空时才执行异步队列中的任务。所以 `setTimeout`和`setInterval`**无法保证回调函数的执行时机**，可能会在一帧之内执行多次导致多次页面渲染，浪费CPU资源甚至产生卡顿，或者是在一帧即将结束时执行导致重新渲染，出现掉帧的情况。
 
-**`requestAnimationFrame`是怎么优化的？**
+**“`requestAnimationFrame`是怎么优化的？**
 
 - CPU节能，当页面被隐藏或最小化时，暂停渲染。
 - 函数节流，其**循环间隔是由屏幕刷新频率决定的**，**保证回调函数在屏幕的每一次刷新间隔中只执行一次**。
@@ -1616,8 +1628,10 @@ border:1px solid #333
       position:absolute;
       top: 0;
       left: 0;
+      //放大
       width: 200%;
       height: 200%;
+      //缩小
       content:"";
       transform: scale(0.5);
       transform-origin: left top;
@@ -1693,8 +1707,8 @@ metaEl.setAttribute('content', `width=device-width,user-scalable=no,initial-scal
 ![image-20210507093314883](HTML CSS相关.assets/image-20210507093314883.png)
 
 - 用户界面只是一层皮，它没有独自处理命令的能力，但它可以把命令转交给“幕后”的浏览器引擎。
-- 浏览器引擎虽然也无法独自完成这些命令，但能“读懂”你的命令，进而把这个命令用渲染引擎能理解的方式传递给它
-- 渲染引擎不仅自己有一套任务逻辑，它还能够调度一系列执行层面的工作模块。网络资源，经过了渲染引擎渲染成可交互的页面呈现在你面前了。
+- **浏览器引擎虽然也无法独自完成这些命令，但能“读懂”你的命令，进而把这个命令用渲染引擎能理解的方式传递给它**
+- 渲染引擎不仅自己有一套任务逻辑，它还能够调度一系列执行层面的工作模块。网络资源，**经过了渲染引擎渲染成可交互的页面呈现在你面前了**。
 
 #### 渲染引擎工作流程
 
@@ -1732,7 +1746,7 @@ metaEl.setAttribute('content', `width=device-width,user-scalable=no,initial-scal
 
 值得注意的是，渲染树的特点是它**只包含渲染网页所需的节点。**所以在构建渲染树的过程中，除了“结合”之外，浏览器还做了一些关键的小动作，这些小动作可能作为考点出现：
 
-step1： 从 DOM 树的根节点开始遍历，筛选出所有**可见**的节点（不包括head，meta，display=none等不可见的节点）；
+**step1： 从 DOM 树的根节点开始遍历**，筛选出所有**可见**的节点（不包括head，meta，display=none等不可见的节点）；
 
 step2：仅针对可见节点，为其**匹配 CSSOM 中的 CSS 规则**；
 
@@ -1776,9 +1790,9 @@ step3：发射可见节点（连同其内容和计算的样式）。
 3. **内容**发生变化（比如文本变化或图片被另一个不同尺寸的图片所替代）；
 4. 获取一些**特定属性的值**（offsetTop、offsetLeft、 offsetWidth、offsetHeight、scrollTop、scrollLeft、scrollWidth、scrollHeight、clientTop、clientLeft、clientWidth、clientHeight 等属性）这些属性有一个共性，就是需要通过**即时计算**得到。因此浏览器为了获取这些值，也会进行回流。
 5. 页面**一开始渲染**的时候（这个无法避免）；
-6. **浏览器的窗口尺寸**变化， 因为回流是根据视口的大小来计算元素的位置和大小的；
+6. **浏览器的窗口尺寸**变化**， 因为回流是根据视口的大小来计算元素的位置和大小的；**
 
-**回流的流程如下图所示**：
+**回流的流程如下图所示：**
 
 ![image-20210507100031498](HTML CSS相关.assets/image-20210507100031498.png)
 
@@ -1796,7 +1810,7 @@ step3：发射可见节点（连同其内容和计算的样式）。
    - 用 `visibility` 替换 `display: none` ，因为前者只会引起重绘，后者会引发回流
    - **避免使用table布局**，可能很小的一个小改动会造成整个 table 的重新布局。
    - **避免设置多层内联样式**，CSS 选择符从右往左匹配查找，避免节点层级过多。
-   - 将**动画效果应用到position属性为absolute或fixed的元素**上，避免影响其他元素的布局，这样只是一个重绘，而不是回流，同时，控制动画速度可以选择 `requestAnimationFrame`
+   - 将**动画效果应用到position属性为absolute或fixed的元素**上，避免影响其他元素的布局，这样只是一个重绘，而不是回流**，同时，控制动画速度可以选择 `requestAnimationFrame`**
    - **避免使用CSS表达式**，可能会引发回流。
    - 将**频繁重绘或者回流的节点设置为图层**，图层能够阻止该节点的渲染行为影响别的节点，例如`will-change`、`video`、`iframe`等标签，浏览器会自动将该节点变为图层。
    - **CSS3 硬件加速**（GPU加速），使用css3硬件加速，可以让transform、opacity、filters这些动画不会引起回流重绘 。但是对于动画的其它属性，比如background-color这些，还是会引起回流重绘的，不过它还是可以提升这些动画的性能。
@@ -1888,4 +1902,270 @@ step3：发射可见节点（连同其内容和计算的样式）。
 - ① 浏览器默认的 margin 和 padding 不同 解决：加一个全局 *{ margin: 0; padding: 0; }来统一
 - ② 谷歌中文界面下默认会将小于12px 的文本强制按照12px显示 解决：使用-webkit-transform:scale(.75);收缩的是整个span盒子大小，这时候，必须将span准换成块元素
 - ③ 超链接访问过后hover样式就不会出现了，被点击访问过的超链接样式不再具有hover 和active 了 解决：改变css 属性的排列顺序L-V-H-A
+
+### git
+
+用c写的分布式管理系统   比集中式的优势在于速度快  且不需要联网
+
+集中式：版本库集中放在中央服务器
+
+分布式：每个人的电脑都是一个版本库  如果集中式的服务器出了问题 就好比图书馆的书乱序  所有人都不用干活了   分布式更安全
+
+```
+git init 变成可以用git管理的仓库
+git add . 添加仓库
+git commit 文件提交至仓库
+git status 查看工作区状态
+git diff 查看修改的内容
+git log显示从最近到最远的提交日志
+git reset --hard HEAD^  回退版本  HEAD指向的版本就是当前版本，因此，Git允许我们在版本的历史之间穿梭，使用命令git reset --hard commit_id。
+git checkout --file 丢弃工作区修改
+git rm --file  删除版本库的文件
+git checkout -b 。。  = $ git branch dev $ git checkout dev  创建+ 切换
+git branch查看当前分支
+git merge dev 合并
+git remote查看远程仓库信息
+git tag v1.0  打标签
+git remote add origin git@gitee.com:liaoxuefeng/learngit.git  关联远程仓库
+git config --global alias.st status   简写命令
+```
+
+![image-20210915093055101](C:\Users\shiyifei01_sx\AppData\Roaming\Typora\typora-user-images\image-20210915093055101.png)
+
+git管理的是修改
+
+现在假定是凌晨3点，你不但写了一些胡话，还`git add`到暂存区了：
+
+Git同样告诉我们，用命令`git reset HEAD <file>`可以把暂存区的修改撤销掉（unstage），重新放回工作区：
+
+合并分支时，如果可能，Git会用`Fast forward`模式，但这种模式下，删除分支后，会丢掉分支信息。
+
+### axios
+
+get
+
+```js
+// 上面的请求也可以这样做
+axios.get('/user', {
+    params: {
+      ID: 12345
+    }
+  })
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+```
+
+post
+
+```js
+axios.post('/user', {
+    firstName: 'Fred',
+    lastName: 'Flintstone'
+  })
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+
+```
+
+all
+
+```
+function getUserAccount() {
+  return axios.get('/user/12345');
+}
+
+function getUserPermissions() {
+  return axios.get('/user/12345/permissions');
+}
+
+axios.all([getUserAccount(), getUserPermissions()])
+  .then(axios.spread(function (acct, perms) {
+    // 两个请求现在都执行完成
+  }));
+```
+
+```
+// 发送 POST 请求
+axios({  method: 'post',  url: '/user/12345',  data: {    firstName: 'Fred',    lastName: 'Flintstone'  }});
+```
+
+axios.request(config)
+
+axios.get(url[, config])
+
+axios.delete(url[, config])
+
+axios.head(url[, config])
+
+axios.options(url[, config])
+
+axios.post(url[, data[, config]])
+
+axios.put(url[, data[, config]])
+
+axios.patch(url[, data[, config]])
+
+注意
+
+在使用别名方法时， `url`、`method`、`data` 这些属性都不必在配置中指定。
+
+并发
+
+处理并发请求的助手函数
+
+axios.all(iterable)
+
+axios.spread(callback)
+
+```js
+{   // `url` 是用于请求的服务器 URL  url: '/user',  // `method` 是创建请求时使用的方法  method: 'get', // default  // `baseURL` 将自动加在 `url` 前面，除非 `url` 是一个绝对 URL。  // 它可以通过设置一个 `baseURL` 便于为 axios 实例的方法传递相对 URL  baseURL: 'https://some-domain.com/api/',  // `transformRequest` 允许在向服务器发送前，修改请求数据  // 只能用在 'PUT', 'POST' 和 'PATCH' 这几个请求方法  // 后面数组中的函数必须返回一个字符串，或 ArrayBuffer，或 Stream  transformRequest: [function (data, headers) {    // 对 data 进行任意转换处理    return data;  }],  // `transformResponse` 在传递给 then/catch 前，允许修改响应数据  transformResponse: [function (data) {    // 对 data 进行任意转换处理    return data;  }],  // `headers` 是即将被发送的自定义请求头  headers: {'X-Requested-With': 'XMLHttpRequest'},  // `params` 是即将与请求一起发送的 URL 参数  // 必须是一个无格式对象(plain object)或 URLSearchParams 对象  params: {    ID: 12345  }
+```
+
+```
+  responseType: 'json', // default
+
+  // `responseEncoding` indicates encoding to use for decoding responses
+  // Note: Ignored for `responseType` of 'stream' or client-side requests
+  responseEncoding: 'utf8', // default
+```
+
+```
+ proxy: {
+    host: '127.0.0.1',
+    port: 9000,
+    auth: {
+      username: 'mikeymike',
+      password: 'rapunz3l'
+    }
+  },
+```
+
+配置全局axios默认值
+
+```
+axios.defaults.baseURL = 'https://api.example.com';
+```
+
+```
+// Set config defaults when creating the instance自定义实例默认值
+const instance = axios.create({  baseURL: 'https://api.example.com'});
+```
+
+拦截器
+
+```
+/ 添加请求拦截器
+axios.interceptors.request.use(function (config) {
+    // 在发送请求之前做些什么
+    return config;
+  }, function (error) {
+    // 对请求错误做些什么
+    return Promise.reject(error);
+  });
+
+// 添加响应拦截器
+axios.interceptors.response.use(function (response) {
+    // 对响应数据做点什么
+    return response;
+  }, function (error) {
+    // 对响应错误做点什么
+    return Promise.reject(error);
+  });
+```
+
+错误处理
+
+```
+axios.get('/user/12345')
+  .catch(function (error) {
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      console.log(error.response.data);
+      console.log(error.response.status);
+      console.log(error.response.headers);
+    } else if (error.request) {
+      // The request was made but no response was received
+      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+      // http.ClientRequest in node.js
+      console.log(error.request);
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      console.log('Error', error.message);
+    }
+    console.log(error.config);
+  });
+```
+
+### vue
+
+组件：
+
+Vue.component('todo-item', {  // todo-item 组件现在接受一个  // "prop"，类似于一个自定义 attribute。  // 这个 prop 名为 todo。  props: ['todo'],  template: '<li>{{ todo.text }}</li>' })
+
+```
+<a v-on:[eventName]="doSomething"> ... </a>
+```
+
+在这个示例中，当 `eventName` 的值为 `"focus"` 时，`v-on:[eventName]` 将等价于 `v-on:focus`。
+
+计算属性默认只有 getter，
+
+computed: {  fullName: {    // getter    get: function () {      return this.firstName + ' ' + this.lastName    },
+
+watch
+
+监听器
+
+<div id="watch-example">   <p>     Ask a yes/no question:     <input v-model="question">   </p>   <p>{{ answer }}</p> </div>
+
+ <input v-model="question">
+
+ watch: {   // 如果 `question` 发生改变，这个函数就会运行    question: function (newQuestion, oldQuestion) {      this.answer = 'Waiting for you to stop typing...'      this.debouncedGetAnswer()    }  },
+
+动态绑定class
+
+```js
+<div v-bind:class="{ active: isActive }"></div>
+```
+
+```js
+<div v-bind:class="[isActive ? activeClass : '', errorClass]"></div>
+```
+
+
+
+<div v-bind:class="{ active: isActive }"></div>
+
+![image-20210915144046395](C:\Users\shiyifei01_sx\AppData\Roaming\Typora\typora-user-images\image-20210915144046395.png)
+
+<li v-for="(item, index) in items">
+
+遍历对象
+
+```js
+<div v-for="(value, name) in object">   {{ name }}: {{ value }} </div>
+<div v-for="(value, name, index) in object">
+  {{ index }}. {{ name }}: {{ value }}
+</div>
+```
+
+为了解决这个问题，Vue.js 为 `v-on` 提供了**事件修饰符**。之前提过，修饰符是由点开头的指令后缀来表示的。
+
+- `.stop`
+- `.prevent`
+- `.capture`
+- `.self`
+- `.once`
+- `.passive`
+
+
 
